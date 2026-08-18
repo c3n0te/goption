@@ -3,19 +3,23 @@ package main
 import (
 	"fmt"
 	"log/slog"
-
-	"gonum.org/v1/gonum/mat"
 )
 
 func main() {
-	n := 3
-	dl := []float64{-1, -1} // sub-diagonal
-	d := []float64{2, 2, 2} // main diagonal
-	du := []float64{-1, -1} // super-diagonal
-	x, err := CrankNicolson(dl, d, du, n)
-	if err != nil {
-		slog.Error("Failed to solve tridiagonal system", "error", err)
+	// Configure simulation parameters
+	params := OptionParams{
+		S0:    100.0, // Stock Price
+		K:     100.0, // Strike Price
+		T:     1.0,   // 1 Year to Maturity
+		R:     0.05,  // 5% Risk-free rate
+		Sigma: 0.2,   // 20% Volatility
 	}
 
-	slog.Info(fmt.Sprintf("x = \n%.4f", mat.Formatted(x, mat.Prefix(""))))
+	grid := GridParams{
+		NS: 200, // Stock price steps
+		NT: 100, // Time steps
+	}
+
+	price := CrankNicolson(params, grid)
+	slog.Info(fmt.Sprintf("stock price = %.4f", price))
 }
